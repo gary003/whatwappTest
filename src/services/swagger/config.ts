@@ -18,42 +18,10 @@ const swaggerJson = {
       properties: {
         userId: {
           description: "id of user",
-          type: "integer",
-        },
-        userFirstname: {
-          description: "The name of this world.",
-          type: "string",
-        },
-        userLastname: {
-          description: "lastname.",
-          type: "string",
-        },
-        userUsername: {
-          description: "username .",
-          type: "string",
-        },
-        userPassword: {
-          description: "userPAssword .",
-          type: "string",
-        },
-        userMail: {
-          description: "mail of user..",
-          type: "string",
-        },
-        userLastNotificationDate: {
-          description: "last time the user was warn by a notification.",
-          type: "string",
-        },
-        createdAt: {
-          description: "time of suscription",
-          type: "string",
-        },
-        deletedAt: {
-          description: "date of unsubscription",
           type: "string",
         },
       },
-      required: ["userFirstname", "userLastname", "userUsername", "userPassword", "userMail"],
+      required: ["userId"],
     },
   },
   paths: {
@@ -88,23 +56,6 @@ const swaggerJson = {
           },
         },
       },
-      put: {
-        tags: ["user"],
-        summary: "Update a user in database",
-        description: "Update a user in database",
-        parameters: [
-          {
-            in: "body",
-            name: "body",
-            description: "update fields in users",
-          },
-        ],
-        responses: {
-          "200": {
-            description: "Successfully save new user",
-          },
-        },
-      },
     },
     "/user/{userId}": {
       get: {
@@ -116,7 +67,7 @@ const swaggerJson = {
             name: "userId",
             in: "path",
             required: true,
-            type: "number",
+            type: "string",
             description: "Id of a user (user_id)",
           },
         ],
@@ -135,7 +86,7 @@ const swaggerJson = {
             name: "userId",
             in: "path",
             required: true,
-            type: "number",
+            type: "string",
             description: "Id of a user (user_id)",
           },
         ],

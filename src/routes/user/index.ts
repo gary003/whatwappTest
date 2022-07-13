@@ -24,14 +24,14 @@ userRouter
 userRouter
   .route("/:userId")
   .get(async (req: Request, res: Response) => {
-    const result: User | void = await getUserById(Number(req.params.userId)).catch((err) => console.log(err))
+    const result: User | void = await getUserById(req.params.userId).catch((err) => console.log(err))
 
     if (!result) return res.status(500).json(new Error("Impossible to retreive any user"))
 
     return res.status(200).json(result)
   })
   .delete(async (req: Request, res: Response) => {
-    const result: User | void = await deleteUserById(Number(req.params.userId)).catch((err) => console.log(err))
+    const result: User | void = await deleteUserById(req.params.userId).catch((err) => console.log(err))
 
     if (!result) return res.status(500).json(new Error("Impossible to update delete_at for the user"))
 

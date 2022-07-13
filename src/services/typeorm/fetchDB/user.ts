@@ -1,5 +1,6 @@
 import { User } from "../entity/user"
 import { connectionTypeORM } from "../connectionFile"
+import { Wallets } from "../entity/wallets"
 
 export const getAllUsers = async () => {
   const connection = await connectionTypeORM().catch((err) => console.error(""))
@@ -8,7 +9,10 @@ export const getAllUsers = async () => {
 
   const UserRepository = connection.getRepository(User)
 
-  const results: User[] | void = await UserRepository.find().catch((err) => console.error(err))
+  const results: User[] | void = await UserRepository.createQueryBuilder("user")
+    .innerJoinAndMapOne("user.wallet", Wallets, "wallet", "wallet.userId = user.userId")
+    .getMany()
+    .catch((err) => console.log(err.sqlMessage))
 
   await connection.close().catch((err) => console.log(err))
 
@@ -17,14 +21,18 @@ export const getAllUsers = async () => {
   return results
 }
 
-export const getUserById = async (userId: number) => {
+export const getUserById = async (userId: string) => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
 
   const UserRepository = connection.getRepository(User)
 
-  const result: User | void = await UserRepository.findOne({ userId: userId }).catch((err) => console.error(err))
+  const result: User | void = await UserRepository.createQueryBuilder("user")
+    .innerJoinAndMapOne("user.wallet", Wallets, "wallet", "wallet.userId = user.userId")
+    .where("user.userId = :userId", { userId: userId })
+    .getOne()
+    .catch((err) => console.log(err.sqlMessage))
 
   await connection.close().catch((err) => console.log(err))
 
@@ -52,7 +60,7 @@ export const saveNewUser = async (user: User) => {
   return result
 }
 
-export const deleteUserById = async (userId: number) => {
+export const deleteUserById = async (userId: string) => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
