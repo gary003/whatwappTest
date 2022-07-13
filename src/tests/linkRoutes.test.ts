@@ -2,7 +2,7 @@ import chai from "chai"
 import request from "supertest"
 import app from "../app"
 
-let testUserId: number = null
+let testUserId: string = "cc2c90b6-029c-11ed-b939-0242ac120002"
 
 describe("API bookmark tests", () => {
   describe("route > user > GET", () => {
@@ -28,34 +28,7 @@ describe("API bookmark tests", () => {
       request(app)
         .post("/api/user")
         .send({
-          userFirstname: "Erin",
-          userLastname: "Lin",
-          userUsername: "Erin.Lin",
-          userPassword: "az12",
-          userMail: "elin@gmail.com",
-          userLastNotificationDate: "",
-          createdAt: "",
-          deletedAt: "",
-        })
-        .set("Accept", "application/json")
-        .expect("Content-Type", /json/)
-        .end((err, result) => {
-          // console.log(result.body)
-          if (!!err) return done(err)
-          chai.assert.isNotEmpty(result.body)
-          testUserId = result.body.userId
-          done()
-        })
-    })
-  })
-
-  describe("route > user > PUT", () => {
-    it("should update an existing user", (done) => {
-      request(app)
-        .put("/api/user")
-        .send({
           userId: testUserId,
-          userUsername: "new_userUserName_lilin20",
         })
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)
@@ -63,6 +36,8 @@ describe("API bookmark tests", () => {
           // console.log(result.body)
           if (!!err) return done(err)
           chai.assert.isNotEmpty(result.body)
+          chai.assert.isNotEmpty(result.body.userId)
+          testUserId = result.body.userId
           done()
         })
     })
@@ -78,7 +53,6 @@ describe("API bookmark tests", () => {
           //console.log(result.body)
           if (!!err) return done(err)
           chai.assert.exists(result.body.userId)
-          chai.assert.exists(result.body.userUsername)
           done()
         })
     })

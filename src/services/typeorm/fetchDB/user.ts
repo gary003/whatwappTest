@@ -4,14 +4,14 @@ import { connectionTypeORM } from "../connectionFile"
 import { Wallets } from "../entity/wallets"
 
 export const getAllUsers = async () => {
-  const connection = await connectionTypeORM().catch((err) => console.error(""))
+  const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
 
   const UserRepository = connection.getRepository(User)
 
   const results: User[] | void = await UserRepository.createQueryBuilder("user")
-    .innerJoinAndMapOne("user.wallet", Wallets, "wallet", "wallet.userId = user.userId")
+    .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
     .getMany()
     .catch((err) => console.log(err.sqlMessage))
 
@@ -30,7 +30,7 @@ export const getUserById = async (userId: string) => {
   const UserRepository = connection.getRepository(User)
 
   const result: User | void = await UserRepository.createQueryBuilder("user")
-    .innerJoinAndMapOne("user.wallet", Wallets, "wallet", "wallet.userId = user.userId")
+    // .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
     .where("user.userId = :userId", { userId: userId })
     .getOne()
     .catch((err) => console.log(err.sqlMessage))
@@ -47,18 +47,8 @@ export const saveNewUser = async (user: User) => {
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
 
-  const newUser = new User()
-  newUser.userId = user.userId
-
-  const UserRepository = connection.getRepository(User)
-
-  const result: User | void = await UserRepository.save(newUser).catch((err) => console.error(err))
-
-  if (!result) throw new Error("Impossible to save the new user")
-
   const newWallet = new Wallets()
   newWallet.walletId = uuidv4()
-  newWallet.userId = user.userId
   newWallet.hard_currency = Math.floor(Math.random() * 95) + 5
   newWallet.soft_currency = Math.floor(Math.random() * 990) + 10
 
@@ -66,9 +56,19 @@ export const saveNewUser = async (user: User) => {
 
   const resultWallet: Wallets | void = await WalletRepository.save(newWallet).catch((err) => console.error(err))
 
-  await connection.close().catch((err) => console.log(err))
-
   if (!resultWallet) throw new Error("Impossible to save the wallet for new user")
+
+  const newUser = new User()
+  newUser.userId = user.userId
+  newUser.walletId = resultWallet.walletId
+
+  const UserRepository = connection.getRepository(User)
+
+  const result: User | void = await UserRepository.save(newUser).catch((err) => console.error(err))
+
+  if (!result) throw new Error("Impossible to save the new user")
+
+  await connection.close().catch((err) => console.log(err))
 
   return result
 }
@@ -84,13 +84,11 @@ export const deleteUserById = async (userId: string) => {
 
   if (!userToDelete) throw new Error("Impossible to found the requested user to delete")
 
-  await UserRepository.delete(userToDelete)
+  const deletedUserResult = await UserRepository.delete(userToDelete)
 
-  const result: User | void = await UserRepository.save(userToDelete).catch((err) => console.log(err))
+  if (!deletedUserResult.affected || deletedUserResult.affected != 1) throw new Error("Impossible to delete the user")
 
   await connection.close().catch((err) => console.log(err))
 
-  if (!result) throw new Error("Impossible to update delete_at for the user")
-
-  return result
+  return deletedUserResult
 }

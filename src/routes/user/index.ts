@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express"
+import { DeleteResult } from "typeorm"
 import { User } from "../../services/typeorm/entity/user"
 import { deleteUserById, getAllUsers, getUserById, saveNewUser } from "../../services/typeorm/fetchDB/user"
 
@@ -31,7 +32,7 @@ userRouter
     return res.status(200).json(result)
   })
   .delete(async (req: Request, res: Response) => {
-    const result: User | void = await deleteUserById(req.params.userId).catch((err) => console.log(err))
+    const result: DeleteResult | void = await deleteUserById(req.params.userId).catch((err) => console.log(err))
 
     if (!result) return res.status(500).json(new Error("Impossible to update delete_at for the user"))
 
