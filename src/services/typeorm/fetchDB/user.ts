@@ -1,4 +1,5 @@
 import { User } from "../entity/user"
+import { v4 as uuidv4 } from "uuid"
 import { connectionTypeORM } from "../connectionFile"
 import { Wallets } from "../entity/wallets"
 
@@ -53,9 +54,21 @@ export const saveNewUser = async (user: User) => {
 
   const result: User | void = await UserRepository.save(newUser).catch((err) => console.error(err))
 
+  if (!result) throw new Error("Impossible to save the new user")
+
+  const newWallet = new Wallets()
+  newWallet.walletId = uuidv4()
+  newWallet.userId = user.userId
+  newWallet.hard_currency = Math.floor(Math.random() * 95) + 5
+  newWallet.soft_currency = Math.floor(Math.random() * 990) + 10
+
+  const WalletRepository = connection.getRepository(Wallets)
+
+  const resultWallet: Wallets | void = await WalletRepository.save(newWallet).catch((err) => console.error(err))
+
   await connection.close().catch((err) => console.log(err))
 
-  if (!result) throw new Error("Impossible to save the new user")
+  if (!resultWallet) throw new Error("Impossible to save the wallet for new user")
 
   return result
 }

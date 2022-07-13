@@ -4,7 +4,7 @@ import { User } from "./user"
 @Entity()
 export class Wallets {
   @PrimaryGeneratedColumn()
-  walletId: number
+  walletId: string
 
   @ManyToOne((type) => User)
   @JoinColumn({ name: "userId" })
