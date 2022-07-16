@@ -5,24 +5,6 @@ import app from "../app"
 let testUserId: string = "cc2c90b6-029c-11ed-b939-0242ac120002"
 
 describe("API bookmark tests", () => {
-  describe("route > user > GET", () => {
-    it("should return an array", (done) => {
-      // with Mocha don't use return (return request(app)) !
-      request(app)
-        .get("/api/user")
-        .set("Accept", "application/json")
-        .end((err, result) => {
-          // console.log(result.body)
-          if (!!err) return done(err)
-          chai.assert.isArray(result.body)
-          if (result.body.length > 0) {
-            chai.assert.exists(result.body[0].userId)
-          }
-          done()
-        })
-    })
-  })
-
   describe("route > user > POST", () => {
     it("should add a new user", (done) => {
       request(app)
@@ -38,7 +20,25 @@ describe("API bookmark tests", () => {
           chai.assert.isNotEmpty(result.body)
           chai.assert.isNotEmpty(result.body.userId)
           testUserId = result.body.userId
-          done()
+          return done()
+        })
+    })
+  })
+
+  describe("route > user > GET", () => {
+    it("should return an array", (done) => {
+      // with Mocha don't use return (return request(app)) !
+      request(app)
+        .get("/api/user")
+        .set("Accept", "application/json")
+        .end((err, result) => {
+          // console.log(result.body)
+          if (!!err) return done(err)
+          chai.assert.isArray(result.body)
+          if (result.body.length > 0) {
+            chai.assert.exists(result.body[0].userId)
+          }
+          return done()
         })
     })
   })
@@ -50,10 +50,10 @@ describe("API bookmark tests", () => {
         .get("/api/user/" + testUserId)
         .set("Accept", "application/json")
         .end((err, result) => {
-          //console.log(result.body)
+          // console.log(result.body)
           if (!!err) return done(err)
           chai.assert.exists(result.body.userId)
-          done()
+          return done()
         })
     })
   })
@@ -63,12 +63,11 @@ describe("API bookmark tests", () => {
       request(app)
         .delete("/api/user/" + testUserId)
         .set("Accept", "application/json")
-        .expect("Content-Type", /json/)
         .end((err, result) => {
           // console.log(result.body)
           if (!!err) return done(err)
           chai.assert.isNotNull(result.body)
-          done()
+          return done()
         })
     })
   })
