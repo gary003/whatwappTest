@@ -1,13 +1,10 @@
-import { Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm"
-import { Wallets } from "./wallets"
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   userId: string
 
-  @OneToOne((type) => Wallets, {
-    onDelete: "CASCADE",
-  })
+  @Column("text")
   walletId: string
 }

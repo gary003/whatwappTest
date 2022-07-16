@@ -11,7 +11,7 @@ export const getAllUsers = async () => {
   const UserRepository = connection.getRepository(User)
 
   const results: User[] | void = await UserRepository.createQueryBuilder("user")
-    .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
+    // .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
     .getMany()
     .catch((err) => console.log(err.sqlMessage))
 
@@ -30,8 +30,8 @@ export const getUserById = async (userId: string) => {
   const UserRepository = connection.getRepository(User)
 
   const result: User | void = await UserRepository.createQueryBuilder("user")
-    // .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
-    .where("user.userId = :userId", { userId: userId })
+    .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
+    // .where("user.userId = :userId", { userId: userId })
     .getOne()
     .catch((err) => console.log(err.sqlMessage))
 
@@ -60,7 +60,7 @@ export const saveNewUser = async (user: User) => {
 
   const newUser = new User()
   newUser.userId = user.userId
-  newUser.walletId = resultWallet.walletId
+  newUser.walletId = newWallet.walletId
 
   const UserRepository = connection.getRepository(User)
 
@@ -80,15 +80,25 @@ export const deleteUserById = async (userId: string) => {
 
   const UserRepository = connection.getRepository(User)
 
-  const userToDelete: User | void = await UserRepository.findOne({ userId: userId }).catch((err) => console.error(err))
+  const userToDelete: User | void = await UserRepository.findOne({ where: { userId: userId } }).catch((err) => console.error(err))
 
   if (!userToDelete) throw new Error("Impossible to found the requested user to delete")
 
-  const deletedUserResult = await UserRepository.delete(userToDelete)
+  const deletedUser = await UserRepository.remove(userToDelete)
 
-  if (!deletedUserResult.affected || deletedUserResult.affected != 1) throw new Error("Impossible to delete the user")
+  if (!deletedUser) throw new Error("Impossible to delete the user")
+
+  const WalletsRepository = connection.getRepository(Wallets)
+
+  const WalletToDelete: Wallets | void = await WalletsRepository.findOne({ where: { walletId: deletedUser.walletId } }).catch((err) => console.error(err))
+
+  if (!WalletToDelete) throw new Error("Impossible to found the requested wallet to delete")
+
+  const deletedWallet = await WalletsRepository.delete(WalletToDelete)
+
+  if (!deletedWallet) throw new Error("Impossible to delete the wallet")
 
   await connection.close().catch((err) => console.log(err))
 
-  return deletedUserResult
+  return deletedUser
 }

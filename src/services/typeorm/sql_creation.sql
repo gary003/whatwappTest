@@ -1,5 +1,5 @@
--- drop table if exists user;
--- drop table if exists wallets;
+drop table if exists user;
+drop table if exists wallets;
 
 create table wallets(
   walletId varchar(50) primary key,
