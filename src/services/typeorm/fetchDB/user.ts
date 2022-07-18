@@ -2,6 +2,7 @@ import { User } from "../entity/user"
 import { v4 as uuidv4 } from "uuid"
 import { connectionTypeORM } from "../connectionFile"
 import { Wallets } from "../entity/wallets"
+import { moneyTypes } from "./dto"
 
 export const getAllUsers = async () => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))
@@ -69,6 +70,36 @@ export const saveNewUser = async (user: User) => {
   if (!result) throw new Error("Impossible to save the new user")
 
   await connection.close().catch((err) => console.log(err))
+
+  return result
+}
+
+export const addCurrency = async (userId: string, currencyType: string, amount: number) => {
+  const connection = await connectionTypeORM().catch((err) => console.error(err))
+
+  if (!connection || !connection.isConnected) throw new Error("Impossible to connect to database")
+
+  const UserRepository = connection.getRepository(User)
+
+  const userToUpdate: User | void = await UserRepository.findOne({ userId }).catch((err) => console.error(err))
+
+  if (!userToUpdate) throw new Error("Impossible to found the requested user to add funds to")
+
+  const WalletsRepository = connection.getRepository(Wallets)
+
+  const walletToUpdate: Wallets | void = await WalletsRepository.findOne({ walletId: userToUpdate.walletId }).catch((err) => console.error(err))
+
+  if (!walletToUpdate) throw new Error("Impossible to found the requested wallet")
+
+  if (currencyType === moneyTypes.HARDCURRENCY) WalletsRepository.merge(walletToUpdate, { hard_currency: (walletToUpdate.hard_currency += amount) })
+  else if (currencyType === moneyTypes.SOFTCURRENCY) WalletsRepository.merge(walletToUpdate, { soft_currency: (walletToUpdate.soft_currency += amount) })
+  else throw new Error("Invalid type of fund to update")
+
+  const result = await WalletsRepository.save(walletToUpdate).catch((err) => console.log(err))
+
+  await connection.close()
+
+  if (!result) throw new Error("Impossible to add the funds to the user")
 
   return result
 }

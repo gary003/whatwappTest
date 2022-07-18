@@ -1,6 +1,6 @@
 import chai from "chai"
 import request from "supertest"
-import app from "../app"
+import app from "../../app"
 
 let testUserId: string = "cc2c90b6-029c-11ed-b939-0242ac120002"
 

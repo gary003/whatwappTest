@@ -3,6 +3,7 @@ drop table if exists wallets;
 
 create table wallets(
   walletId varchar(50) primary key,
+  userId varchar(50),
   hard_currency int,
   soft_currency int
 );
