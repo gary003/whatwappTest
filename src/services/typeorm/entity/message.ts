@@ -1,13 +1,16 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
-export class User {
+export class Message {
   @PrimaryGeneratedColumn()
-  userId: string
+  messageId: string
 
   @Column("text")
-  walletId: string
+  senderId: string
 
   @Column("text")
   clubId: string
+
+  @Column("text")
+  content: string
 }

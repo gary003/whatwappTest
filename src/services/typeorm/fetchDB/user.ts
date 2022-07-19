@@ -62,6 +62,7 @@ export const saveNewUser = async (user: User) => {
   const newUser = new User()
   newUser.userId = user.userId
   newUser.walletId = newWallet.walletId
+  newUser.clubId = null
 
   const UserRepository = connection.getRepository(User)
 
