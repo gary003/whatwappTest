@@ -1,9 +1,5 @@
 import chai from "chai"
-// import sinonChai from "sinon-chai"
-import { addCurrency, getAllUsers } from "../../services/typeorm/fetchDB/user"
-// import { Wallets } from "../../services/typeorm/entity/wallets"
-
-// chai.use(sinonChai)
+import { addCurrency, getAllUsers, getUserById } from "../../services/typeorm/fetchDB/user"
 
 describe("Unit tests", () => {
   describe("services > typeorm > fetchDB > user > addCurrency", () => {
@@ -16,6 +12,19 @@ describe("Unit tests", () => {
 
       chai.assert(response.walletId === "515f73c2-027d-11ed-b939-0242ac120002", "Should get the correct walletId")
     })
+
+    it("should fail because of negative amount", async () => {
+      const amountToAdd = -55
+
+      try {
+        await addCurrency("22ef5564-0234-11ed-b939-0242ac120002", "soft_currency", amountToAdd)
+        throw new Error("Should never happen")
+      } catch (err) {
+        // console.log(response)
+        chai.assert.isNotNull(err, "Should get an error")
+        chai.assert.equal(err, "Error: The amount to add must be at least equal to 1")
+      }
+    })
   })
 
   describe("services > typeorm > fetchDB > user > getAllUsers", () => {
@@ -25,6 +34,32 @@ describe("Unit tests", () => {
       if (!response) throw new Error("Error - invalid response from serviceDB")
 
       chai.assert.isArray(response, "Should get the list in an array format")
+    })
+  })
+
+  describe("services > typeorm > fetchDB > user > getUserById", () => {
+    it("should retreive a single user from DB", async () => {
+      const userToFetch: string = "22ef5564-0234-11ed-b939-0242ac120002"
+
+      const response = await getUserById(userToFetch).catch((err) => console.log(err))
+      // console.log(response)
+      if (!response) throw new Error("Error - invalid response from serviceDB")
+
+      chai.assert.exists(response, "Should get a valid response from DB")
+      chai.assert.equal(response.userId, userToFetch, "Should get a valid response with a userId")
+    })
+
+    it("should fail retreiving a single user (user does not exists in DB)", async () => {
+      const userToFetch: string = "22ef5564-0234-11ed-b939-0242ac1200026"
+
+      try {
+        await getUserById(userToFetch)
+        throw new Error("Should never happen")
+      } catch (err) {
+        // console.log(response)
+        chai.assert.exists(err, "Should get an err from DB")
+        chai.assert.equal(err, "Error: Impossible to retreive any user")
+      }
     })
   })
 })

@@ -76,6 +76,8 @@ export const saveNewUser = async (user: User) => {
 }
 
 export const addCurrency = async (userId: string, currencyType: string, amount: number) => {
+  if (amount <= 0) throw new Error("The amount to add must be at least equal to 1")
+
   const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Impossible to connect to database")
@@ -98,7 +100,7 @@ export const addCurrency = async (userId: string, currencyType: string, amount: 
 
   const result = await WalletsRepository.save(walletToUpdate).catch((err) => console.log(err))
 
-  await connection.close()
+  await connection.close().catch((err) => console.log(err))
 
   if (!result) throw new Error("Impossible to add the funds to the user")
 

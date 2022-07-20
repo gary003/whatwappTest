@@ -11,8 +11,8 @@ create table wallets(
 
 insert into wallets(walletId, hard_currency, soft_currency) 
   values 
-  ("515f73c2-027d-11ed-b939-0242ac120002", 100, 124),
-  ("698f73c2-027d-11ed-b939-0242ac120002", 25, 45);
+  ("515f73c2-027d-11ed-b939-0242ac120002", 1000, 1240),
+  ("698f73c2-027d-11ed-b939-0242ac120002", 250, 450);
 
 create table club(
   clubId varchar(50),

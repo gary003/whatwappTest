@@ -39,7 +39,7 @@ describe("Unit tests", () => {
     })
   })
 
-  describe.only("services > typeorm > fetchDB > club > getClub", () => {
+  describe("services > typeorm > fetchDB > club > getClub", () => {
     it("Should list a club by id", async () => {
       const clubToCheck = "77ef5564-0234-11ed-b939-0242ac120002"
 
@@ -52,7 +52,7 @@ describe("Unit tests", () => {
       chai.assert.strictEqual(response.clubId, clubToCheck, "The response should have a clubId")
     })
 
-    it.only("Should fail listing a club by id (wrong clubId)", async () => {
+    it("Should fail listing a club by id (wrong clubId)", async () => {
       const fakeClubToCheck = "99zf5564-0234-11ed-b939-0242ac120002"
 
       try {
