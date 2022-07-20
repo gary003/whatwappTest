@@ -24,7 +24,7 @@ userRouter
 userRouter
   .route("/:userId")
   .get(async (req: Request, res: Response) => {
-    const result: User | void = await getUserById(req.params.userId).catch((err) => console.log(err))
+    const result = await getUserById(req.params.userId).catch((err) => console.log(err))
 
     if (!result) return res.status(500).json(new Error("Impossible to retreive any user"))
 

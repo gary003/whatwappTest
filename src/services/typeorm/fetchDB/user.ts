@@ -30,9 +30,9 @@ export const getUserById = async (userId: string) => {
 
   const UserRepository = connection.getRepository(User)
 
-  const result: User | void = await UserRepository.createQueryBuilder("user")
+  const result = await UserRepository.createQueryBuilder("user")
     .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
-    // .where("user.userId = :userId", { userId: userId })
+    .where("user.userId = :userId", { userId: userId })
     .getOne()
     .catch((err) => console.log(err.sqlMessage))
 
