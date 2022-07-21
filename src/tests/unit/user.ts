@@ -1,7 +1,7 @@
 import chai from "chai"
 import { addCurrency, getAllUsers, getUserById } from "../../services/typeorm/fetchDB/user"
 
-describe("Unit tests", () => {
+describe("Unit tests user", () => {
   describe("services > typeorm > fetchDB > user > addCurrency", () => {
     it("should update a wallet currency for a user with the correct amount", async () => {
       const amountToAdd = 123

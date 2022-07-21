@@ -4,7 +4,7 @@ import app from "../../app"
 
 let testUserId: string = "cc2c90b6-029c-11ed-b939-0242ac120002"
 
-describe("API bookmark tests", () => {
+describe("Functional Tests API", () => {
   describe("route > user > POST", () => {
     it("should add a new user", (done) => {
       request(app)

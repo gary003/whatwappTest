@@ -6,7 +6,7 @@ import { createClub, getClub, joinClub, listClubs } from "../../services/typeorm
 
 // chai.use(sinonChai)
 
-describe("Unit tests", () => {
+describe("Unit tests club", () => {
   describe("services > typeorm > fetchDB > club > createClub", () => {
     it("Create a new club", async () => {
       const response = await createClub("22ef5564-0234-11ed-b939-0242ac120002").catch((err) => console.log(err))

@@ -2,7 +2,7 @@ import chai from "chai"
 import { Message } from "../../services/typeorm/entity/message"
 import { getClubMessages, sendMessage } from "../../services/typeorm/fetchDB/message"
 
-describe("Unit tests", () => {
+describe("Unit tests message", () => {
   describe("services > typeorm > fetchDB > message > sendMessage", () => {
     it("should create a new message with all the correct parameters", async () => {
       const senderId: string = "22ef5564-0234-11ed-b939-0242ac120002"

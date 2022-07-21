@@ -1,13 +1,6 @@
-// CreateClub: the user can create a Club, which is a group of users. Every club has a maximum number of members (default: 50). When creating a club, the user spends 50 hard_currency;
-// JoinClub: the user can join an existing club by sending the club id. If the maximum number of members is already reached an error must be returned to the user. When successfully joining a club the user spends 100 soft_currency
-// ListClubs: it returns a list of existing clubs
-// GetClub: given the club id, it returns the details of a single club
-// SendMessage: the user can send a message to its club
-// GetClubMessages: it returns the list of messages shared in the club
-
 import { connectionTypeORM } from "../connectionFile"
 import { User } from "../entity/user"
-import { Wallets } from "../entity/wallets"
+import { Wallet } from "../entity/wallet"
 import { Club } from "../entity/club"
 import { v4 as uuidv4 } from "uuid"
 
@@ -19,7 +12,7 @@ export const createClub = async (userId: string): Promise<Club> => {
   const creatorUser: any = await connection
     .getRepository(User)
     .createQueryBuilder("user")
-    .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
+    .innerJoinAndMapOne("user.wallet", Wallet, "wallets", "wallets.walletId = user.walletId")
     .where("user.userId = :userId", { userId: userId })
     .getOne()
     .catch((err) => console.log(err.sqlMessage))
@@ -27,13 +20,11 @@ export const createClub = async (userId: string): Promise<Club> => {
   if (!creatorUser) throw new Error("Impossible to find the user for club creation")
 
   const clubCreationCost: number = 50
-  const maxAdherent: number = 50
 
   if (creatorUser.wallet.hard_currency < clubCreationCost) throw new Error("not enough funds to create club")
 
   const newClub: Club = new Club()
   newClub.clubId = uuidv4()
-  newClub.maxUserNum = maxAdherent
 
   const resultNewClub: Club | void = await connection
     .getRepository(Club)
@@ -44,12 +35,12 @@ export const createClub = async (userId: string): Promise<Club> => {
 
   const userNewFunds: number = creatorUser.wallet.hard_currency - clubCreationCost
 
-  const walletToUpdate: Wallets = await connection.getRepository(Wallets).findOne(creatorUser.walletId)
+  const walletToUpdate: Wallet = await connection.getRepository(Wallet).findOne(creatorUser.walletId)
 
-  const updateUserWallet: Wallets = connection.getRepository(Wallets).merge(walletToUpdate, { hard_currency: userNewFunds })
+  const updateUserWallet: Wallet = connection.getRepository(Wallet).merge(walletToUpdate, { hard_currency: userNewFunds })
 
-  const resultUpdate: Wallets | void = await connection
-    .getRepository(Wallets)
+  const resultUpdate: Wallet | void = await connection
+    .getRepository(Wallet)
     .save(updateUserWallet)
     .catch((err) => console.log(err))
 
@@ -75,7 +66,7 @@ export const joinClub = async (userId: string, clubId: string): Promise<User> =>
   const newClubUser: any = await connection
     .getRepository(User)
     .createQueryBuilder("user")
-    .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
+    .innerJoinAndMapOne("user.wallet", Wallet, "wallets", "wallets.walletId = user.walletId")
     .where("user.userId = :userId", { userId: userId })
     .getOne()
     .catch((err) => console.log(err.sqlMessage))
@@ -98,12 +89,12 @@ export const joinClub = async (userId: string, clubId: string): Promise<User> =>
 
   const userNewFunds: number = newClubUser.wallet.soft_currency - clubAffiliationCost
 
-  const walletToUpdate: Wallets = await connection.getRepository(Wallets).findOne(newClubUser.walletId)
+  const walletToUpdate: Wallet = await connection.getRepository(Wallet).findOne(newClubUser.walletId)
 
-  const updateUserWallet: Wallets = connection.getRepository(Wallets).merge(walletToUpdate, { soft_currency: userNewFunds })
+  const updateUserWallet: Wallet = connection.getRepository(Wallet).merge(walletToUpdate, { soft_currency: userNewFunds })
 
-  const resultWalletUpdate: Wallets | void = await connection
-    .getRepository(Wallets)
+  const resultWalletUpdate: Wallet | void = await connection
+    .getRepository(Wallet)
     .save(updateUserWallet)
     .catch((err) => console.log(err))
 

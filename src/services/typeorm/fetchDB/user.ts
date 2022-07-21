@@ -1,7 +1,7 @@
 import { User } from "../entity/user"
 import { v4 as uuidv4 } from "uuid"
 import { connectionTypeORM } from "../connectionFile"
-import { Wallets } from "../entity/wallets"
+import { Wallet } from "../entity/wallet"
 import { moneyTypes } from "./dto"
 
 export const getAllUsers = async () => {
@@ -31,7 +31,7 @@ export const getUserById = async (userId: string) => {
   const UserRepository = connection.getRepository(User)
 
   const result = await UserRepository.createQueryBuilder("user")
-    .innerJoinAndMapOne("user.wallet", Wallets, "wallets", "wallets.walletId = user.walletId")
+    .innerJoinAndMapOne("user.wallet", Wallet, "wallets", "wallets.walletId = user.walletId")
     .where("user.userId = :userId", { userId: userId })
     .getOne()
     .catch((err) => console.log(err.sqlMessage))
@@ -48,14 +48,14 @@ export const saveNewUser = async (user: User) => {
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
 
-  const newWallet = new Wallets()
+  const newWallet = new Wallet()
   newWallet.walletId = uuidv4()
   newWallet.hard_currency = Math.floor(Math.random() * 95) + 5
   newWallet.soft_currency = Math.floor(Math.random() * 990) + 10
 
-  const WalletRepository = connection.getRepository(Wallets)
+  const WalletRepository = connection.getRepository(Wallet)
 
-  const resultWallet: Wallets | void = await WalletRepository.save(newWallet).catch((err) => console.error(err))
+  const resultWallet: Wallet | void = await WalletRepository.save(newWallet).catch((err) => console.error(err))
 
   if (!resultWallet) throw new Error("Impossible to save the wallet for new user")
 
@@ -88,9 +88,9 @@ export const addCurrency = async (userId: string, currencyType: string, amount: 
 
   if (!userToUpdate) throw new Error("Impossible to found the requested user to add funds to")
 
-  const WalletsRepository = connection.getRepository(Wallets)
+  const WalletsRepository = connection.getRepository(Wallet)
 
-  const walletToUpdate: Wallets | void = await WalletsRepository.findOne({ walletId: userToUpdate.walletId }).catch((err) => console.error(err))
+  const walletToUpdate: Wallet | void = await WalletsRepository.findOne({ walletId: userToUpdate.walletId }).catch((err) => console.error(err))
 
   if (!walletToUpdate) throw new Error("Impossible to found the requested wallet")
 
@@ -122,9 +122,9 @@ export const deleteUserById = async (userId: string) => {
 
   if (!deletedUser) throw new Error("Impossible to delete the user")
 
-  const WalletsRepository = connection.getRepository(Wallets)
+  const WalletsRepository = connection.getRepository(Wallet)
 
-  const WalletToDelete: Wallets | void = await WalletsRepository.findOne({ where: { walletId: deletedUser.walletId } }).catch((err) => console.error(err))
+  const WalletToDelete: Wallet | void = await WalletsRepository.findOne({ where: { walletId: deletedUser.walletId } }).catch((err) => console.error(err))
 
   if (!WalletToDelete) throw new Error("Impossible to found the requested wallet to delete")
 
