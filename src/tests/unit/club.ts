@@ -17,7 +17,7 @@ describe("Unit tests club", () => {
     })
   })
 
-  describe.only("services > typeorm > fetchDB > club > joinClub", () => {
+  describe("services > typeorm > fetchDB > club > joinClub", () => {
     it("User join a club", async () => {
       const response = await joinClub("22ef5564-0234-11ed-b939-0242ac120002", "77ef5564-0234-11ed-b939-0242ac120002").catch((err) => console.log(err))
       // console.log(response)

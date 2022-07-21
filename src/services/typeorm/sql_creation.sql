@@ -1,6 +1,6 @@
 drop table if exists message;
 drop table if exists user;
-drop table if exists wallets;
+drop table if exists wallet;
 drop table if exists club;
 
 create table wallet(

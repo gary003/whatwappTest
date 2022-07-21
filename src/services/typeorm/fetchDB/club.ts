@@ -61,8 +61,10 @@ export const joinClub = async (userId: string, clubId: string): Promise<User> =>
     .findOne({ clubId })
     .catch((err) => console.log(err))
 
-  if (!clubToJoin) throw new Error("This club doesn't exists")
-
+  if (!clubToJoin) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("This club doesn't exists")
+  }
   const clubMembers = await connection
     .getRepository(User)
     .createQueryBuilder("user")
@@ -90,8 +92,14 @@ export const joinClub = async (userId: string, clubId: string): Promise<User> =>
     .getOne()
     .catch((err) => console.log(err.sqlMessage))
 
-  if (!newClubUser) throw new Error("Impossible to find the user for club affiliation")
-  if (newClubUser.wallet.soft_currency < 100) throw new Error("Not enough funds to join the club")
+  if (!newClubUser) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to find the user for club affiliation")
+  }
+  if (newClubUser.wallet.soft_currency < 100) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Not enough funds to join the club")
+  }
 
   const userToUpdate: User = await connection.getRepository(User).findOne(newClubUser.userId)
 
@@ -102,7 +110,10 @@ export const joinClub = async (userId: string, clubId: string): Promise<User> =>
     .save(newMember)
     .catch((err) => console.log(err))
 
-  if (!resultUpdate) throw new Error("Impossible to add the new user to the club")
+  if (!resultUpdate) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to add the new user to the club")
+  }
 
   const clubAffiliationCost = 100
 
@@ -136,7 +147,10 @@ export const listClubs = async (): Promise<Club[]> => {
 
   await connection.close().catch((err) => console.log(err))
 
-  if (!allClubs) throw new Error("Impossible to list the clubs")
+  if (!allClubs) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to list the clubs")
+  }
 
   return allClubs
 }
@@ -153,7 +167,10 @@ export const getClub = async (clubId: string): Promise<Club> => {
 
   await connection.close().catch((err) => console.log(err))
 
-  if (!club) throw new Error("Impossible to list the requested club")
+  if (!club) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to list the requested club")
+  }
 
   return club
 }

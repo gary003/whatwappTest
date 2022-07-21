@@ -57,7 +57,10 @@ export const saveNewUser = async (user: User): Promise<User> => {
 
   const resultWallet: Wallet | void = await WalletRepository.save(newWallet).catch((err) => console.error(err))
 
-  if (!resultWallet) throw new Error("Impossible to save the wallet for new user")
+  if (!resultWallet) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to save the wallet for new user")
+  }
 
   const newUser: User = new User()
   newUser.userId = user.userId
@@ -68,9 +71,9 @@ export const saveNewUser = async (user: User): Promise<User> => {
 
   const result: User | void = await UserRepository.save(newUser).catch((err) => console.error(err))
 
-  if (!result) throw new Error("Impossible to save the new user")
-
   await connection.close().catch((err) => console.log(err))
+
+  if (!result) throw new Error("Impossible to save the new user")
 
   return result
 }
@@ -86,17 +89,26 @@ export const addCurrency = async (userId: string, currencyType: string, amount: 
 
   const userToUpdate: User | void = await UserRepository.findOne({ userId }).catch((err) => console.error(err))
 
-  if (!userToUpdate) throw new Error("Impossible to found the requested user to add funds to")
+  if (!userToUpdate) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to found the requested user to add funds to")
+  }
 
   const WalletsRepository = connection.getRepository(Wallet)
 
   const walletToUpdate: Wallet | void = await WalletsRepository.findOne({ walletId: userToUpdate.walletId }).catch((err) => console.error(err))
 
-  if (!walletToUpdate) throw new Error("Impossible to found the requested wallet")
+  if (!walletToUpdate) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to found the requested wallet")
+  }
 
   if (currencyType === moneyTypes.HARDCURRENCY) WalletsRepository.merge(walletToUpdate, { hard_currency: (walletToUpdate.hard_currency += amount) })
   else if (currencyType === moneyTypes.SOFTCURRENCY) WalletsRepository.merge(walletToUpdate, { soft_currency: (walletToUpdate.soft_currency += amount) })
-  else throw new Error("Invalid type of fund to update")
+  else {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Invalid type of fund to update")
+  }
 
   const result = await WalletsRepository.save(walletToUpdate).catch((err) => console.log(err))
 
@@ -116,7 +128,10 @@ export const deleteUserById = async (userId: string): Promise<User> => {
 
   const userToDelete: User | void = await UserRepository.findOne({ where: { userId: userId } }).catch((err) => console.error(err))
 
-  if (!userToDelete) throw new Error("Impossible to found the requested user to delete")
+  if (!userToDelete) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to found the requested user to delete")
+  }
 
   const deletedUser: User = await UserRepository.remove(userToDelete)
 
@@ -126,13 +141,16 @@ export const deleteUserById = async (userId: string): Promise<User> => {
 
   const WalletToDelete: Wallet | void = await WalletsRepository.findOne({ where: { walletId: deletedUser.walletId } }).catch((err) => console.error(err))
 
-  if (!WalletToDelete) throw new Error("Impossible to found the requested wallet to delete")
+  if (!WalletToDelete) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to found the requested wallet to delete")
+  }
 
   const deletedWallet = await WalletsRepository.delete(WalletToDelete)
 
-  if (!deletedWallet) throw new Error("Impossible to delete the wallet")
-
   await connection.close().catch((err) => console.log(err))
+
+  if (!deletedWallet) throw new Error("Impossible to delete the wallet")
 
   return deletedUser
 }
