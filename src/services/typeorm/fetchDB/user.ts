@@ -4,7 +4,7 @@ import { connectionTypeORM } from "../connectionFile"
 import { Wallet } from "../entity/wallet"
 import { moneyTypes } from "./dto"
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (): Promise<User[]> => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
@@ -23,14 +23,14 @@ export const getAllUsers = async () => {
   return results
 }
 
-export const getUserById = async (userId: string) => {
+export const getUserById = async (userId: string): Promise<User> => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
 
   const UserRepository = connection.getRepository(User)
 
-  const result = await UserRepository.createQueryBuilder("user")
+  const result: any = await UserRepository.createQueryBuilder("user")
     .innerJoinAndMapOne("user.wallet", Wallet, "wallets", "wallets.walletId = user.walletId")
     .where("user.userId = :userId", { userId: userId })
     .getOne()
@@ -43,12 +43,12 @@ export const getUserById = async (userId: string) => {
   return result
 }
 
-export const saveNewUser = async (user: User) => {
+export const saveNewUser = async (user: User): Promise<User> => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
 
-  const newWallet = new Wallet()
+  const newWallet: Wallet = new Wallet()
   newWallet.walletId = uuidv4()
   newWallet.hard_currency = Math.floor(Math.random() * 95) + 5
   newWallet.soft_currency = Math.floor(Math.random() * 990) + 10
@@ -59,7 +59,7 @@ export const saveNewUser = async (user: User) => {
 
   if (!resultWallet) throw new Error("Impossible to save the wallet for new user")
 
-  const newUser = new User()
+  const newUser: User = new User()
   newUser.userId = user.userId
   newUser.walletId = newWallet.walletId
   newUser.clubId = null
@@ -75,7 +75,7 @@ export const saveNewUser = async (user: User) => {
   return result
 }
 
-export const addCurrency = async (userId: string, currencyType: string, amount: number) => {
+export const addCurrency = async (userId: string, currencyType: string, amount: number): Promise<Wallet> => {
   if (amount <= 0) throw new Error("The amount to add must be at least equal to 1")
 
   const connection = await connectionTypeORM().catch((err) => console.error(err))
@@ -107,7 +107,7 @@ export const addCurrency = async (userId: string, currencyType: string, amount: 
   return result
 }
 
-export const deleteUserById = async (userId: string) => {
+export const deleteUserById = async (userId: string): Promise<User> => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))
 
   if (!connection || !connection.isConnected) throw new Error("Not Connected to database")
@@ -118,7 +118,7 @@ export const deleteUserById = async (userId: string) => {
 
   if (!userToDelete) throw new Error("Impossible to found the requested user to delete")
 
-  const deletedUser = await UserRepository.remove(userToDelete)
+  const deletedUser: User = await UserRepository.remove(userToDelete)
 
   if (!deletedUser) throw new Error("Impossible to delete the user")
 

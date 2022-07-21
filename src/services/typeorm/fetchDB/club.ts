@@ -63,10 +63,29 @@ export const joinClub = async (userId: string, clubId: string): Promise<User> =>
 
   if (!clubToJoin) throw new Error("This club doesn't exists")
 
+  const clubMembers = await connection
+    .getRepository(User)
+    .createQueryBuilder("user")
+    .where("user.clubId = :clubId", { clubId })
+    .getMany()
+    .catch((err) => console.log(err))
+
+  if (!clubMembers) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to retreive member")
+  }
+
+  const maxMember: number = 50
+
+  if (clubMembers.length > maxMember) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("The club is already at max capacity")
+  }
+
   const newClubUser: any = await connection
     .getRepository(User)
     .createQueryBuilder("user")
-    .innerJoinAndMapOne("user.wallet", Wallet, "wallets", "wallets.walletId = user.walletId")
+    .innerJoinAndMapOne("user.wallet", Wallet, "wallet", "wallet.walletId = user.walletId")
     .where("user.userId = :userId", { userId: userId })
     .getOne()
     .catch((err) => console.log(err.sqlMessage))

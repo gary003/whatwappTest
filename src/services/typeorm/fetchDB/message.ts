@@ -28,7 +28,7 @@ export const sendMessage = async (senderUserId: string, recipientClubId: string,
     throw new Error("this club does not exist in DB")
   }
 
-  const newMessage = new Message()
+  const newMessage: Message = new Message()
   newMessage.messageId = uuidv4()
   newMessage.senderId = senderUserId
   newMessage.clubId = recipientClubId
