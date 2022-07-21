@@ -21,7 +21,10 @@ export const createClub = async (userId: string): Promise<Club> => {
 
   const clubCreationCost: number = 50
 
-  if (creatorUser.wallet.hard_currency < clubCreationCost) throw new Error("not enough funds to create club")
+  if (creatorUser.wallet.hard_currency < clubCreationCost) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("not enough funds to create club")
+  }
 
   const newClub: Club = new Club()
   newClub.clubId = uuidv4()
@@ -31,7 +34,10 @@ export const createClub = async (userId: string): Promise<Club> => {
     .save(newClub)
     .catch((err) => console.log(err))
 
-  if (!resultNewClub) throw new Error("Impossible to create a new club")
+  if (!resultNewClub) {
+    await connection.close().catch((err) => console.log(err))
+    throw new Error("Impossible to create a new club")
+  }
 
   const userNewFunds: number = creatorUser.wallet.hard_currency - clubCreationCost
 
@@ -65,6 +71,7 @@ export const joinClub = async (userId: string, clubId: string): Promise<User> =>
     await connection.close().catch((err) => console.log(err))
     throw new Error("This club doesn't exists")
   }
+
   const clubMembers = await connection
     .getRepository(User)
     .createQueryBuilder("user")
@@ -147,10 +154,7 @@ export const listClubs = async (): Promise<Club[]> => {
 
   await connection.close().catch((err) => console.log(err))
 
-  if (!allClubs) {
-    await connection.close().catch((err) => console.log(err))
-    throw new Error("Impossible to list the clubs")
-  }
+  if (!allClubs) throw new Error("Impossible to list the clubs")
 
   return allClubs
 }
@@ -167,10 +171,7 @@ export const getClub = async (clubId: string): Promise<Club> => {
 
   await connection.close().catch((err) => console.log(err))
 
-  if (!club) {
-    await connection.close().catch((err) => console.log(err))
-    throw new Error("Impossible to list the requested club")
-  }
+  if (!club) throw new Error("Impossible to list the requested club")
 
   return club
 }
