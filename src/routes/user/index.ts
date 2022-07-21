@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express"
-import { User } from "../../services/typeorm/entity/user"
-import { deleteUserById, getAllUsers, getUserById, saveNewUser } from "../../services/typeorm/fetchDB/user"
+import { User } from "../../services/fetchDB/user/entity"
+import { deleteUserById, getAllUsers, getUserById, saveNewUser } from "../../services/fetchDB/user/index"
 
 const userRouter = Router()
 

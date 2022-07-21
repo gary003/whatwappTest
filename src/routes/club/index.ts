@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
-import { Club } from "../../services/typeorm/entity/club"
-import { User } from "../../services/typeorm/entity/user"
-import { createClub, getClub, joinClub, listClubs } from "../../services/typeorm/fetchDB/club"
+import { Club } from "../../services/fetchDB/club/entity"
+import { User } from "../../services/fetchDB/user/entity"
+import { createClub, getClub, joinClub, listClubs } from "../../services/fetchDB/club/index"
 
 const clubRouter = Router()
 

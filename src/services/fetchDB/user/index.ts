@@ -1,7 +1,7 @@
-import { User } from "../entity/user"
+import { User } from "./entity"
 import { v4 as uuidv4 } from "uuid"
 import { connectionTypeORM } from "../connectionFile"
-import { Wallet } from "../entity/wallet"
+import { Wallet } from "../wallet/entity"
 import { moneyTypes } from "./dto"
 
 export const getAllUsers = async (): Promise<User[]> => {

@@ -1,7 +1,7 @@
 import { connectionTypeORM } from "../connectionFile"
-import { User } from "../entity/user"
-import { Wallet } from "../entity/wallet"
-import { Club } from "../entity/club"
+import { User } from "../user/entity"
+import { Wallet } from "../wallet/entity"
+import { Club } from "./entity"
 import { v4 as uuidv4 } from "uuid"
 
 export const createClub = async (userId: string): Promise<Club> => {

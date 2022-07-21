@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express"
-import { Message } from "../../services/typeorm/entity/message"
-import { getClubMessages, sendMessage } from "../../services/typeorm/fetchDB/message"
+import { Message } from "../../services/fetchDB/message/entity"
+import { getClubMessages, sendMessage } from "../../services/fetchDB/message/index"
 
 const messageRouter = Router()
 

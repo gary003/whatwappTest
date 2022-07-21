@@ -1,5 +1,5 @@
 import chai from "chai"
-import { addCurrency, getAllUsers, getUserById } from "../../services/typeorm/fetchDB/user"
+import { addCurrency, getAllUsers, getUserById } from "../../services/fetchDB/user/index"
 
 describe("Unit tests user", () => {
   describe("services > typeorm > fetchDB > user > addCurrency", () => {

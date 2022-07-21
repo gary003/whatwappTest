@@ -1,8 +1,8 @@
 import { connectionTypeORM } from "../connectionFile"
-import { Message } from "../entity/message"
+import { Message } from "./entity"
 import { v4 as uuidv4 } from "uuid"
-import { User } from "../entity/user"
-import { Club } from "../entity/club"
+import { User } from "../user/entity"
+import { Club } from "../club/entity"
 
 export const sendMessage = async (senderUserId: string, recipientClubId: string, messageToSend: string): Promise<Message> => {
   const connection = await connectionTypeORM().catch((err) => console.error(err))

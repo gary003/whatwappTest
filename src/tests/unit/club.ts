@@ -1,10 +1,5 @@
 import chai from "chai"
-import { createClub, getClub, joinClub, listClubs } from "../../services/typeorm/fetchDB/club"
-// import sinonChai from "sinon-chai"
-
-// import { Wallets } from "../../services/typeorm/entity/wallets"
-
-// chai.use(sinonChai)
+import { createClub, getClub, joinClub, listClubs } from "../../services/fetchDB/club/index"
 
 describe("Unit tests club", () => {
   describe("services > typeorm > fetchDB > club > createClub", () => {
