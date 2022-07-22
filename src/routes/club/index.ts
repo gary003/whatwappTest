@@ -10,38 +10,39 @@ clubRouter
   .get(async (_: Request, res: Response) => {
     const results: Club[] | void = await listClubs().catch((err) => console.log(err))
 
-    if (!results) return res.status(500).json(new Error("Impossible to retreive any club"))
+    if (!results) return res.status(500).json("Impossible to retreive any club")
 
     return res.status(200).json(results)
   })
   .post(async (req: Request, res: Response) => {
-    const result: Club | void = await createClub(req.body).catch((err) => console.log(err))
+    const userId: string = req.body.userId
 
-    if (!result) return res.status(500).json(new Error("Impossible to save the new club"))
+    const result: Club | void = await createClub(userId).catch((err) => console.log(err))
 
-    return res.status(200).json(result)
-  })
-
-clubRouter
-  .route("/:clubId")
-  .get(async (req: Request, res: Response) => {
-    const result: Club | void = await getClub(req.params.clubId).catch((err) => console.log(err))
-
-    if (!result) return res.status(500).json(new Error("Impossible to retreive any club"))
+    if (!result) return res.status(500).json("Impossible to save the new club")
 
     return res.status(200).json(result)
   })
-  .put(async (req: Request, res: Response) => {
-    const newAdherent: string = req.body.userId
-    const clubToJoin: string = req.body.clubId
 
-    if (!newAdherent || !clubToJoin) return res.status(400).json("Invalid data input")
+clubRouter.route("/join").put(async (req: Request, res: Response) => {
+  const userId: string = req.body.userId
+  const clubId: string = req.body.clubId
 
-    const result: User | void = await joinClub(newAdherent, clubToJoin).catch((err) => console.log(err))
+  if (!userId || !clubId) return res.status(400).json("Invalid data input")
 
-    if (!result) return res.status(500).json(new Error("Impossible to retreive any club"))
+  const result: User | void = await joinClub(userId, clubId).catch((err) => console.log(err))
 
-    return res.status(200).json(result)
-  })
+  if (!result) return res.status(500).json("Impossible to retreive any club")
+
+  return res.status(200).json(result)
+})
+
+clubRouter.route("/:clubId").get(async (req: Request, res: Response) => {
+  const result: Club | void = await getClub(req.params.clubId).catch((err) => console.log(err))
+
+  if (!result) return res.status(500).json("Impossible to retreive any club")
+
+  return res.status(200).json(result)
+})
 
 export default clubRouter

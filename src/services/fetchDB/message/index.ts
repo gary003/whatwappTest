@@ -18,6 +18,7 @@ export const sendMessage = async (senderUserId: string, recipientClubId: string,
     await connection.close().catch((err) => console.log(err))
     throw new Error("this user does not exist in DB")
   }
+
   const isValidClub: Club | void = await connection
     .getRepository(Club)
     .findOne({ clubId: recipientClubId })

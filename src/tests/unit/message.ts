@@ -3,7 +3,7 @@ import { Message } from "../../services/fetchDB/message/entity"
 import { getClubMessages, sendMessage } from "../../services/fetchDB/message/index"
 
 describe("Unit tests message", () => {
-  describe("services > typeorm > fetchDB > message > sendMessage", () => {
+  describe("services > fetchDB > message > index > sendMessage", () => {
     it("should create a new message with all the correct parameters", async () => {
       const senderId: string = "22ef5564-0234-11ed-b939-0242ac120002"
       const clubRecipient: string = "77ef5564-0234-11ed-b939-0242ac120002"
@@ -48,7 +48,7 @@ describe("Unit tests message", () => {
     })
   })
 
-  describe("services > typeorm > fetchDB > message > getClubMessages", () => {
+  describe("services > fetchDB > message > index > getClubMessages", () => {
     it("should render a list of messages", async () => {
       const clubId = "77ef5564-0234-11ed-b939-0242ac120002"
 

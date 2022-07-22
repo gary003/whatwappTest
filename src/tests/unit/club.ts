@@ -2,7 +2,7 @@ import chai from "chai"
 import { createClub, getClub, joinClub, listClubs } from "../../services/fetchDB/club/index"
 
 describe("Unit tests club", () => {
-  describe("services > typeorm > fetchDB > club > createClub", () => {
+  describe("services > fetchDB > club > index > createClub", () => {
     it("Create a new club", async () => {
       const response = await createClub("22ef5564-0234-11ed-b939-0242ac120002").catch((err) => console.log(err))
       // console.log(response)
@@ -12,7 +12,7 @@ describe("Unit tests club", () => {
     })
   })
 
-  describe("services > typeorm > fetchDB > club > joinClub", () => {
+  describe("services > fetchDB > club > index > joinClub", () => {
     it("User join a club", async () => {
       const response = await joinClub("22ef5564-0234-11ed-b939-0242ac120002", "77ef5564-0234-11ed-b939-0242ac120002").catch((err) => console.log(err))
       // console.log(response)
@@ -23,7 +23,7 @@ describe("Unit tests club", () => {
     })
   })
 
-  describe("services > typeorm > fetchDB > club > listClub", () => {
+  describe("services > fetchDB > club > index > listClub", () => {
     it("List all clubs", async () => {
       const response = await listClubs().catch((err) => console.log(err))
       // console.log(response)
@@ -34,7 +34,7 @@ describe("Unit tests club", () => {
     })
   })
 
-  describe("services > typeorm > fetchDB > club > getClub", () => {
+  describe("services > fetchDB > club > index > getClub", () => {
     it("Should list a club by id", async () => {
       const clubToCheck = "77ef5564-0234-11ed-b939-0242ac120002"
 

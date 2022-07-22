@@ -2,7 +2,7 @@ import chai from "chai"
 import { addCurrency, getAllUsers, getUserById } from "../../services/fetchDB/user/index"
 
 describe("Unit tests user", () => {
-  describe("services > typeorm > fetchDB > user > addCurrency", () => {
+  describe("services > fetchDB > user > index > addCurrency", () => {
     it("should update a wallet currency for a user with the correct amount", async () => {
       const amountToAdd = 123
 
@@ -27,7 +27,7 @@ describe("Unit tests user", () => {
     })
   })
 
-  describe("services > typeorm > fetchDB > user > getAllUsers", () => {
+  describe("services > fetchDB > user > index > getAllUsers", () => {
     it("should retreive all the users from DB", async () => {
       const response = await getAllUsers().catch((err) => console.log(err))
       // console.log(response)
@@ -37,7 +37,7 @@ describe("Unit tests user", () => {
     })
   })
 
-  describe("services > typeorm > fetchDB > user > getUserById", () => {
+  describe("services > fetchDB > user > index > getUserById", () => {
     it("should retreive a single user from DB", async () => {
       const userToFetch: string = "22ef5564-0234-11ed-b939-0242ac120002"
 

@@ -34,12 +34,12 @@ You will need to create your .env file (ask for it)
 ## Tests
 
 In a shell :
-`npm test`
+`npm run test`
 
 ## Quick Start
 
 In a shell :
-`npm start`
+`npm run start`
 
 The server should have started and should be listening on a port
 

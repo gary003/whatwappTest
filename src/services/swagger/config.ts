@@ -63,6 +63,28 @@ const swaggerJson = {
       },
       required: ["clubId"],
     },
+    Donation: {
+      type: "object",
+      properties: {
+        donationId: {
+          description: "id of a donation",
+          type: "string",
+        },
+        recipientId: {
+          description: "userId of the recipient of the targeted funds",
+          type: "string",
+        },
+        fundingGoal: {
+          description: "target funds",
+          type: "number",
+        },
+        currentFund: {
+          description: "funds currently collected",
+          type: "number",
+        },
+      },
+      required: ["donationId", "recipientId", "fundingGoal"],
+    },
   },
   paths: {
     "/user": {
@@ -117,46 +139,8 @@ const swaggerJson = {
           },
         },
       },
-      delete: {
-        tags: ["user"],
-        summary: "Delete a user by id",
-        description: "Delete a user by id, the user won't be erase from DB. instead, the deleted_at attribut will be updated",
-        parameters: [
-          {
-            name: "userId",
-            in: "path",
-            required: true,
-            type: "string",
-            description: "Id of a user (user_id)",
-          },
-        ],
-        responses: {
-          "200": {
-            description: "Successful deletion",
-          },
-        },
-      },
     },
-    "/message/{clubId}": {
-      get: {
-        tags: ["message"],
-        summary: "get all messages",
-        description: "all message will be retreive from DB for a specified clubId",
-        parameters: [
-          {
-            name: "clubId",
-            in: "path",
-            required: true,
-            type: "string",
-            description: "Id of a club (clubId)",
-          },
-        ],
-        responses: {
-          "200": {
-            description: "Successfuly get all messages for the specified club ",
-          },
-        },
-      },
+    "/message": {
       post: {
         tags: ["message"],
         summary: "Save a new message in database",
@@ -178,14 +162,188 @@ const swaggerJson = {
         },
       },
     },
+    "/message/{clubId}": {
+      get: {
+        tags: ["message"],
+        summary: "Get all messages for one club",
+        description: "All messages from a specified clubId",
+        parameters: [
+          {
+            name: "clubId",
+            in: "path",
+            required: true,
+            type: "string",
+            description: "Id of a club (clubId)",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Successfuly get all messages for the specified club ",
+          },
+        },
+      },
+    },
     "/club": {
       get: {
         tags: ["club"],
-        summary: "Get a all clubs",
-        description: "Get all clubs from DB",
+        summary: "Get a all clubs informations",
+        description: "Get all clubs by its id from DB",
         responses: {
           "200": {
             description: "Successfully get the requestesd user",
+          },
+        },
+      },
+      post: {
+        tags: ["club"],
+        summary: "Create a new club",
+        description: "Create a new club",
+        parameters: [
+          {
+            in: "body",
+            name: "body",
+            description: "donation info needed",
+            schema: {
+              type: "object",
+              required: ["userId"],
+              properties: {
+                userId: {
+                  type: "string",
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Successfully get the requestesd user",
+          },
+        },
+      },
+    },
+    "/club/join": {
+      put: {
+        tags: ["club"],
+        summary: "Join a club",
+        description: "Join an existing club",
+        parameters: [
+          {
+            in: "body",
+            name: "body",
+            description: "donation info needed",
+            schema: {
+              type: "object",
+              required: ["clubId", "userId"],
+              properties: {
+                clubId: {
+                  type: "string",
+                },
+                userId: {
+                  type: "string",
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Successfully get the requestesd user",
+          },
+        },
+      },
+    },
+    "/club/{clubId}": {
+      get: {
+        tags: ["club"],
+        summary: "Get a specific club informations",
+        description: "Get a specific club informations by clubId",
+        parameters: [
+          {
+            name: "clubId",
+            in: "path",
+            required: true,
+            type: "string",
+            description: "Id of a club (clubId)",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Successfully get the requestesd user",
+          },
+        },
+      },
+    },
+    "/donation": {
+      get: {
+        tags: ["donation"],
+        summary: "Get a all donations",
+        description: "Lists all donations from DB",
+        responses: {
+          "200": {
+            description: "Successfully get the requestesd user",
+          },
+        },
+      },
+      post: {
+        tags: ["donation"],
+        summary: "Create a new donation request",
+        description: "Create a new donation request",
+        parameters: [
+          {
+            in: "body",
+            name: "body",
+            description: "donation info",
+            schema: {
+              type: "object",
+              required: ["userId", "fundingGoal"],
+              properties: {
+                userId: {
+                  type: "string",
+                },
+                fundingGoal: {
+                  type: "number",
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Successfully add funds to donation",
+          },
+        },
+      },
+    },
+    "/donation/makeDonation": {
+      post: {
+        tags: ["donation"],
+        summary: "Add funds to an existing donation",
+        description: "Add funds to an existing donation - donation of soft_currency from a user in the same club",
+        parameters: [
+          {
+            in: "body",
+            name: "body",
+            description: "donation info needed",
+            schema: {
+              type: "object",
+              required: ["donationId", "amount"],
+              properties: {
+                donationId: {
+                  type: "string",
+                },
+                userId: {
+                  type: "string",
+                },
+                amount: {
+                  type: "number",
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Successfully add funds to donation",
           },
         },
       },

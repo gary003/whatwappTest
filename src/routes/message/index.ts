@@ -4,27 +4,26 @@ import { getClubMessages, sendMessage } from "../../services/fetchDB/message/ind
 
 const messageRouter = Router()
 
-messageRouter
-  .route("/:clubId")
-  .get(async (req: Request, res: Response) => {
-    const results: Message[] | void = await getClubMessages(req.params.clubId).catch((err) => console.log(err))
+messageRouter.route("/").post(async (req: Request, res: Response) => {
+  const userId: string = req.body.userId
+  const clubId: string = req.body.clubId
+  const content: string = req.body.content
 
-    if (!results) return res.status(500).json(new Error("Impossible to retreive any message"))
+  if (!userId || !clubId || !content) return res.status(400).json("Wrong data information")
 
-    return res.status(200).json(results)
-  })
-  .post(async (req: Request, res: Response) => {
-    const userId: string = req.body.userId
-    const clubId: string = req.body.clubId
-    const content: string = req.body.content
+  const result: Message | void = await sendMessage(userId, clubId, content).catch((err) => console.log(err))
 
-    if (!userId || !clubId || !content) return res.status(400).json("Wrong data information")
+  if (!result) return res.status(500).json("Impossible to save the new message")
 
-    const result: Message | void = await sendMessage(userId, clubId, content).catch((err) => console.log(err))
+  return res.status(200).json(result)
+})
 
-    if (!result) return res.status(500).json(new Error("Impossible to save the new message"))
+messageRouter.route("/:clubId").get(async (req: Request, res: Response) => {
+  const results: Message[] | void = await getClubMessages(req.params.clubId).catch((err) => console.log(err))
 
-    return res.status(200).json(result)
-  })
+  if (!results) return res.status(500).json("Impossible to retreive any message")
+
+  return res.status(200).json(results)
+})
 
 export default messageRouter
